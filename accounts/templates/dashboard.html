@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+<meta http-equiv="refresh" content="20">
+<title>Dashboard</title>
+{% endblock %}
+{% block nav %} 
+<div class="form-inline my-2 my-lg-0 ml-auto" >
+        {% if user.is_authenticated %}
+        <a class="btn btn-dark mx-2" data-toggle='modal', data-target='#profilemodal' type="button" href="/dashboard" role="button">Profile Manager</a>
+        <a class="btn btn-dark mx-2" data-toggle='modal', data-target='#meetingmodal' type="button" href="/dashboard" role="button">Meeting History</a>
+        <a class="btn btn-danger mx-2" data-toggle='modal', data-target='#logoutmodal' type="button" href="/logout" role="button">Logout</a>
+        {% else %}
+        <a class="btn btn-success mx-2" href="/admin_login" role="button">Admin Login</a>
+        {% endif %}
+        
+  </div>
+{% endblock %}
+
+{% block header %}
+<header class="masthead text-white text-center" style="background:url('{% static '/img/bg-3.png' %}') center fixed;background-size:100% 100%;">
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mx-auto text-lg-left" style="width: 80%;" role="alert">
+            <strong> {{ msg }} </strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+    {% endfor  %}
+    {% endif %}
+   
+    <div class="text-center">
+        <h1 class='text-monospace text-light'>SELECT YOUR HOST FOR MEETING</h1>
+    </div>
+
+    <form action="/dashboard/" method="post">
+        {% csrf_token %}
+        <select name="typedoc" style="width: 130px;cursor: pointer;margin-right: 30px;border: 2px solid black;padding: 5px;border-radius: 5px;">
+            <option value="None">Doctor type</option>
+            <option value="Nephrologist">Nephrologist</option>
+            <option value="Surgeon">Surgeon</option>
+            <option value="Child Specialist">Child Specialist</option>
+            <option value="Physician">Physician</option>
+            <option value="Dentist">Dentist</option>
+            <option value="Psychiatrist">Psychiatrist</option>
+            <option value="Skin Specialist">Skin Specialist</option>
+            <option value="Neurologist">Neurologist</option>
+            <option value="Heart Specialist">Heart Specialist</option>
+            <option value="Bones Specialist">Bones Specialist</option>
+            <option value="Other">Other</option>
+        </select>
+        <button type="submit" style="border-radius: 8px;width:100px;border: 2px solid black;padding: 5px;">Go</button>
+        <a href="/dashboard/" style="border-radius: 8px;width:100px;text-decoration: none;border: 2px solid black;padding: 7px;margin-left: 25px;color: black;background: white;">Clear Filter</a>
+    </form>
+    <hr class="bg-light" style="width: 70%;">
+    <div class="container">
+            <div class="row">
+            {% for p in hosts %}
+                <div class="col">       
+                <div class="col mx-auto mb-5">
+                            <div class="card text-dark" style="width: 14rem;">
+                                    <img src="/media/{{ p.host_image }}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                      <h5 class="card-title">{{ p.host_name }}</h5>
+                                      <p class="card-text">{{ p.host_desc }}</p>
+                                    </div>
+                                <form action = "meeting/" method="post">{% csrf_token %}
+                                    <ul class="list-group list-group-flush">
+                                      {% if p.status %}
+                                        <li class="list-group-item bg-success text-white">FREE</li>
+                                        <li class="list-group-item">
+                                            <button class="btn btn-primary mx-2" style="width: 90%;" type="submit" value="{{ p.id }}" name="meeting">Arrange Meeting</button>
+                                        </li>
+                                        {% else %}
+                                        <li class="list-group-item bg-danger text-white">BUSY</li>
+                                        <li class="list-group-item">
+                                        <button class="btn btn-warning" style="width: 90%;" type="submit" value="{{ p.current_meeting_id }}" name="visitor">Current Visitor</button>
+                                        </li>
+                                        {% endif %}
+                                      
+                                    </ul>
+                                    </form>
+                                  </div>
+                            
+                    </div>  
+                </div>
+                {% endfor %}
+                </div>
+                <!-- <div style="margin-top: 50px;"><a href="/emergent" class="btn btn-primary mx-2" style="font-size: 21px;border-radius: 10px;">Emergency consult</a><span style="font-size: small;">   (Choose only if all your required doctors are busy)</span>
+                </div> -->
+            </div>
+
+<div id="profilemodal" class='modal fade' role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content text-dark">
+            <div class="modal-header font-weight-bolder ">
+                    <h6 class="modal-title">Visitors are not allowed to use this !!</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+            </div>
+            <form action = "verification/" method="post">{% csrf_token %}
+            <div class="modal-body">
+                    <div class="form-group row my-auto">
+                    <label for="inputPassword2" class="col-form-label mx-3">Enter Security password</label>
+                    <div class="ml-3">
+                    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password"">
+                </div>
+                </div>
+                
+            </div>
+            <div class="modal-footer text-center">
+                <button class="btn bg-success btn-rounded text-light" name="profile" value="profile" type="submit">Verify</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+
+<div id="meetingmodal" class='modal fade' role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content text-dark">
+                <div class="modal-header font-weight-bolder ">
+                        <h6 class="modal-title">Visitors are not allowed to use this !!</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <form action = "verification/" method="post">{% csrf_token %}
+                <div class="modal-body">
+                        <div class="form-group row my-auto">
+                        <label for="inputPassword2" class="col-form-label mx-3">Enter Security password</label>
+                        <div class="ml-3">
+                        <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password"">
+                    </div>
+                    </div>
+                    
+                </div>
+                <div class="modal-footer text-center">
+                    <button class="btn bg-success btn-rounded text-light" name="meeting" value="meeting" type="submit">Verify</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+
+<div id="logoutmodal" class='modal fade' role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content text-dark">
+                    <div class="modal-header font-weight-bolder ">
+                            <h6 class="modal-title">Visitors are not allowed to use this !!</h6>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <form action = "verification/" method="post">{% csrf_token %}
+                    <div class="modal-body">
+                            <div class="form-group row my-auto">
+                            <label for="inputPassword2" class="col-form-label mx-3">Enter Security password</label>
+                            <div class="ml-3">
+                            <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password"">
+                        </div>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer text-center">
+                        <button class="btn bg-success btn-rounded text-light" name="logout" value="logout" type="submit">Verify</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+</header>
+{% endblock %}
+{% block footer %}
+<footer class="footer bg-light" style="height: auto; width: auto;">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 my-auto h-100 text-center text-lg-left">
+                    <div class="row footer-bottom d-flex justify-content-between mb-2">
+                    <p class="col-lg-8 col-sm-12 text-muted small">
+                    Made by <a href="https://github.com/hks74123" target="_blank">Hemant Sharma,Neeraj sharma,K gopi krishna</a></p>
+                    </div>
+                </div>
+                    <div class="col-lg-6 my-auto h-100 text-center text-lg-right">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#"><i class="fa fa-github fa-2x fa-fw"></i></a></li>
+                            <li class="list-inline-item"><a href="#"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
+                            <li class="list-inline-item"><a href="#"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
+                            <li class="list-inline-item"><a href="#"><i class="fa fa-instagram fa-2x fa-fw"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+    </footer>
+{% endblock %}

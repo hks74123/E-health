@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}<title>Meeting History</title>{% endblock %}
+{% block nav %} 
+<div class="form-inline my-2 my-lg-0 ml-auto">
+        <h6 class="text-dark mx-3 my-auto">Hello, Admin</h6>
+        <a class="btn btn-primary mx-2" href="/doc_profile/{{ pid }}/" role="button">Profile Manager</a>
+        <a class="btn btn-danger mx-2" href="/doc_logout/" role="button">Logout</a>     
+  </div>
+{% endblock %}
+{% block header %}
+<header class="masthead text-center" style="background:url('{% static '/img/bg-3.png' %}')no-repeat center center fixed;background-size:cover; height: 38rem;">
+    <h2 class='text-monospace text-light mx-5'>Today's Scheduled Meetings</h1>
+        <form action="/checkout_doc_meet/{{ pid }}{{ lngth}}/" method="post">
+            {% csrf_token %}
+    <div class="container-fluid text-center" >
+            <table class="table table-light">
+            <thead class="thead-dark">
+              <TR>
+              <TH>C.O</TH>
+              <TH>Meeting Id</TH>
+              <TH>Visitor's Name</TH>
+              <TH>Visitor's Contact</TH>
+              <TH>Host Name</TH>
+              <TH>Time In</TH>
+              <TH>Time Out</TH>
+          </TR>
+            </thead>
+              <tbody>
+                    {% for m in meeting %}
+                    <TR>
+                        <TD><input type="checkbox" name=chck{{ forloop.counter }} id=dd{{ forloop.counter }} class="cboxes" style="cursor: pointer;">
+                        <input type="hidden" name=chck1{{ forloop.counter }} value={{ m.id }}>
+                        <input type="hidden" name=chck2{{ forloop.counter }} value={{ m.host }}>
+                        </TD>
+                        <TD>{{ m.id}}</TD>
+                        <TD>{{ m.visitor_name}}</TD>
+                        <TD>{{ m.visitor_phone}}</TD>
+                        <TD>{{ m.host}}</TD>
+                        <TD>{{ m.time_in}}</TD>
+                        {% if m.time_out %}
+                        <TD>{{ m.time_out}}</TD>
+                        {% else %}
+                        <TD class="text-danger text-monospace"><strong>BUSY</strong></TD>
+                        {% endif %}
+                        </TR>
+                    {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <button type="submit" class="btn btn-primary mx-2">Checkout</button>
+        </form>
+
+        <header class="masthead text-center" style="background:url('{% static '/img/bg-3.png' %}')no-repeat center center fixed;background-size:cover; height: 38rem;">
+          <h2 class='text-monospace text-light mx-5'>Today's Done Meetings </h1>
+          <div class="container-fluid text-center" >
+                  <table class="table table-light">
+                  <thead class="thead-dark">
+                    <TR>
+                    <TH>Meeting Id</TH>
+                    <TH>Visitor's Name</TH>
+                    <TH>Visitor's Contact</TH>
+                    <TH>Host Name</TH>
+                    <TH>Time In</TH>
+                    <TH>Time Out</TH>
+                </TR>
+                  </thead>
+                    <tbody>
+                          {% for m1 in meeting1 %}
+                          <TR>
+                              <TD>{{ m1.id}}</TD>
+                              <TD>{{ m1.visitor_name}}</TD>
+                              <TD>{{ m1.visitor_phone}}</TD>
+                              <TD>{{ m1.host}}</TD>
+                              <TD>{{ m1.time_in}}</TD>
+                              {% if m1.time_out %}
+                              <TD>{{ m1.time_out}}</TD>
+                              {% else %}
+                              <TD class="text-danger text-monospace"><strong>BUSY</strong></TD>
+                              {% endif %}
+                              </TR>
+                          {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+        
+{% endblock %}

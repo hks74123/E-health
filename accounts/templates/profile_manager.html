@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}<title>Profile Manager</title>{% endblock %}
+{% block nav %} 
+<div class="form-inline my-2 my-lg-0 ml-auto">
+        <h6 class="text-dark mx-3 my-auto">Hello, Admin</h6>
+        <a class="btn btn-primary mx-2" href="/dashboard" role="button">Dashboard</a>
+  </div>
+{% endblock %}
+{% block header %}
+<header class="masthead text-white text-center " style="background:url('{% static '/img/bg.jpeg' %}')no-repeat center center fixed;background-size:cover; height: cover">
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show mx-auto text-lg-left" style="width: 80%;" role="alert">
+            <strong> {{ msg }} </strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+    {% endfor  %}
+    {% endif %}
+    
+    <div class="container">
+        <div class="row">
+            <div class="card mx-auto" style="width: 40rem; display: inline-block;">
+                <h5 class="card-header bg-info text-monospace text-center">
+                    <strong class="text-center">Add Profile Details</strong>
+                </h5>
+            
+                <div class="card-body px-lg-5 mt-2">
+                    <form class="text-center" style="color: #757575;" action="/dashboard/profile_managered/" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                        <div class="form-row">
+                            <div class="col">
+                            <div class="row">
+                                <label class="ml-3 mt-2" style="display: inline-block;">Name :</label>                               
+                                <div class="md-form mx-auto" name='fstname' style="display:block;">
+                                    {{ form.fstname }}
+                                </div>
+                                
+                            </div>
+                            </div>
+                        </div>
+
+                        <div class="row my-3">
+                            <label class="ml-3 mt-2" style="display: inline-block;">Username :</label>
+                            <div class="md-form mx-auto" name='usernm' style="display:block;">
+                                    {{ form.u_nm }}
+                            </div> 
+                                
+                            </div>
+                            <div class="row my-3">
+                                <label class="ml-3 mt-2" style="display: inline-block;">Mail id :</label>                               
+                                <div class="md-form mx-auto" name='maill' style="display:block;">
+                                    {{ form.urmail }}
+                                </div>
+                            </div>
+                        
+                        <div class="row mt-3">
+                            <button class="btn bg-success mx-auto btn-rounded waves-effect z-depth-0 text-light" type="submit" style="width: 7rem; display:inline-block;">Save</button>
+                            
+                        </div>
+                    </form>
+
+                </div>
+                </div>
+                
+            </div>
+            </div>
+</header>
+{% endblock %}
+
